@@ -61,14 +61,14 @@ staging_songs_table_create = ("""CREATE TABLE staging_songs(
 
 songplay_table_create = ("""CREATE TABLE songplays(
     songplay_id INT IDENTITY(0,1),
-    start_time TIMESTAMP,
+    start_time TIMESTAMP NOT NULL,
     user_id VARCHAR,
     level VARCHAR,
-    song_id VARCHAR,
+    song_id VARCHAR NOT NULL,
     artist_id VARCHAR,
     session_id INTEGER,
     location VARCHAR,
-    user_agent VARCHAR,
+    user_agent VARCHAR NOT NULL,
     PRIMARY KEY (songplay_id))
 """)
 
@@ -126,7 +126,9 @@ songplay_table_insert = ("""INSERT INTO songplays(start_time, user_id, level, so
                             SELECT timestamp 'epoch' + SE.time_stamp/1000 * interval '1 second' as start_time, SE.user_id, SE.user_level,
                             SS.song_id, SS.artist_id, SE.session_id, SE.login_location, SE.user_agent
                             FROM staging_events SE, staging_songs SS
-                            WHERE SE.page = 'NextSong' AND SE.song_title = SS.title AND SE.artist_name = SS.artist_name and SE.song_length = SS.duration""")
+			    JOIN SE ON SE.song_title = SS.title
+			    JOIN SE ON SE.artist_name = SS.artist_name
+                            WHERE SE.page = 'NextSong'""")
 
 user_table_insert = ("""INSERT INTO users(user_id, first_name, last_name, gender, level)
                         SELECT DISTINCT user_id, user_first_name, user_last_name, user_gender, user_level
