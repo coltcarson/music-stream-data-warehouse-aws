@@ -9,6 +9,13 @@ For this project, we created a music streaming data warehouse and ETL pipeline u
 
 --------------------------------------------
 
+# Files
+1) create_tables.py - Script drops any extraneous tables and adds new tables.
+2) etl.py - Script copies data to staging tables and inserts transformed data into dimension tables
+3) sql_queries.py - Script stores SQL queries for Redshift.
+
+--------------------------------------------
+
 # Instructions
 1) Create an AWS Redshift Cluster (dc2.large - 4 Nodes) and add the required login credentials to the dwh.cfg file.
 
