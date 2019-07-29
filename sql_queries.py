@@ -32,7 +32,7 @@ staging_events_table_create= ("""CREATE TABLE staging_events(
 	user_last_name VARCHAR,
 	song_length DOUBLE PRECISION,
 	user_level VARCHAR,
-	login_location VARCHAR
+	login_location VARCHAR,
 	request_method VARCHAR,
 	page VARCHAR,
 	registration VARCHAR,
@@ -62,13 +62,13 @@ staging_songs_table_create = ("""CREATE TABLE staging_songs(
 songplay_table_create = ("""CREATE TABLE songplays(
     songplay_id INT IDENTITY(0,1),
     start_time TIMESTAMP NOT NULL,
-    user_id VARCHAR,
+    user_id VARCHAR NOT NULL,
     level VARCHAR,
     song_id VARCHAR NOT NULL,
     artist_id VARCHAR,
     session_id INTEGER,
     location VARCHAR,
-    user_agent VARCHAR NOT NULL,
+    user_agent VARCHAR,
     PRIMARY KEY (songplay_id))
 """)
 
@@ -123,12 +123,10 @@ staging_songs_copy = ("""copy staging_songs from {} iam_role {} region 'us-west-
 ###############################################
 
 songplay_table_insert = ("""INSERT INTO songplays(start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-                            SELECT timestamp 'epoch' + SE.time_stamp/1000 * interval '1 second' as start_time, SE.user_id, SE.user_level,
-                            SS.song_id, SS.artist_id, SE.session_id, SE.login_location, SE.user_agent
-                            FROM staging_events SE, staging_songs SS
-			    JOIN SE ON SE.song_title = SS.title
-			    JOIN SE ON SE.artist_name = SS.artist_name
-                            WHERE SE.page = 'NextSong'""")
+                            SELECT timestamp 'epoch' + staging_events.time_stamp/1000 * interval '1 second' as start_time, staging_events.user_id, staging_events.user_level,
+                            staging_songs.song_id, staging_songs.artist_id, staging_events.session_id, staging_events.login_location, staging_events.user_agent
+                            FROM staging_events JOIN staging_songs ON staging_songs.title = staging_events.song_title AND staging_songs.artist_name = staging_events.artist_name
+                            WHERE staging_events.page = 'NextSong'""")
 
 user_table_insert = ("""INSERT INTO users(user_id, first_name, last_name, gender, level)
                         SELECT DISTINCT user_id, user_first_name, user_last_name, user_gender, user_level
