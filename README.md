@@ -4,5 +4,5 @@ For this project, we created a music streaming data warehouse and ETL pipeline u
 
 --------------------------------------------
 
-#Schema
+# Schema
 ![Redshift Schema](https://github.com/coltcarson/music-stream-data-warehouse-aws/blob/master/Udacity%20DE%20Project%20%233-2.png)
