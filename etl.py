@@ -4,7 +4,8 @@
 
 import configparser
 import psycopg2
-from sql_queries import copy_table_queries, insert_table_queries
+from sql_queries import insert_table_queries
+from sql_queries import copy_table_queries
 
 ###########################################################
 # Copies Data from AWS S3 Buckets into AWS Redshift Cluster
